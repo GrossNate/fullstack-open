@@ -27,3 +27,7 @@ sequenceDiagram
 
     Note right of browser: The browser executes the callback function that renders the notes
 ```
+
+Need to come back and to the exercises at some point:
+
+<https://fullstackopen.com/en/part0/fundamentals_of_web_apps#exercises-0-1-0-6>
