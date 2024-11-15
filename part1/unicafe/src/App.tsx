@@ -7,29 +7,42 @@ const Button = (
   );
 }
 
-const Stats = ({good, neutral, bad} : {good:number, neutral:number, bad:number}) => {
+const StatsLine = ({text, value}: {text: string, value: number | string}) => {
+  return (
+    <>
+      {text}: {value}<br />
+    </>
+  )
+}
+
+const Stats = ({ good, neutral, bad }: { good: number, neutral: number, bad: number }) => {
   const all = good + neutral + bad;
   const avg = (good - bad) / all;
   const positive = good / all;
 
-  return (
-    <>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average: {Number.isNaN(avg)? "n.a." : avg}</p>
-      <p>positive: {Number.isNaN(positive) ? "n.a." : positive.toString() + " %"}</p>
-    </>
-  );
+  if (good + neutral + bad < 1) {
+    return (
+      <p>No feedback given.</p>
+    );
+  } else {
+    return (
+      <>
+        <StatsLine text="good" value={good} />
+        <StatsLine text="neutral" value={neutral} />
+        <StatsLine text="bad" value={bad} />
+        <StatsLine text="all" value={all} />
+        <StatsLine text="avg" value={avg.toFixed(2)} />
+        <StatsLine text="positive" value={(positive * 100).toFixed(2) + "%"} />
+      </>
+    );
+  }
 }
-
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-  
+
   return (
     <>
       <h2>give feedback</h2>
