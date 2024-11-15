@@ -7,11 +7,11 @@ const Button = (
   );
 }
 
-const StatsLine = ({text, value}: {text: string, value: number | string}) => {
+const StatsRow = ({ text, value }: { text: string, value: number | string }) => {
   return (
-    <>
-      {text}: {value}<br />
-    </>
+    <tr>
+      <td>{text}</td><td>{value}</td>
+    </tr>
   )
 }
 
@@ -26,14 +26,16 @@ const Stats = ({ good, neutral, bad }: { good: number, neutral: number, bad: num
     );
   } else {
     return (
-      <>
-        <StatsLine text="good" value={good} />
-        <StatsLine text="neutral" value={neutral} />
-        <StatsLine text="bad" value={bad} />
-        <StatsLine text="all" value={all} />
-        <StatsLine text="avg" value={avg.toFixed(2)} />
-        <StatsLine text="positive" value={(positive * 100).toFixed(2) + "%"} />
-      </>
+      <table>
+        <tbody>
+          <StatsRow text="good" value={good} />
+          <StatsRow text="neutral" value={neutral} />
+          <StatsRow text="bad" value={bad} />
+          <StatsRow text="all" value={all} />
+          <StatsRow text="avg" value={avg.toFixed(2)} />
+          <StatsRow text="positive" value={(positive * 100).toFixed(2) + "%"} />
+        </tbody>
+      </table>
     );
   }
 }
