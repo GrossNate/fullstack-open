@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 interface Person {
   name: string,
-  phoneNumber: string
+  number: string,
+  id: string
 }
 
 const handleInputChange = (controller: React.Dispatch<React.SetStateAction<string>>) => {
@@ -16,14 +19,14 @@ const DisplayNumbers = ({ persons, searchTerm }: { persons: Person[], searchTerm
   return (
     <table>
       <tbody>
-        {persons.filter(filterFunc).map(({ name, phoneNumber }) => {
+        {persons.filter(filterFunc).map(({ name, number: number }) => {
           return (
             <tr key={name}>
               <td>
                 {name}
               </td>
               <td>
-                {phoneNumber}
+                {number}
               </td>
             </tr>
           )
@@ -43,7 +46,7 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
     if (persons.map(({ name }) => name.toLowerCase()).includes(newName.toLowerCase())) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat({ name: newName, phoneNumber: newPhone }));
+      setPersons(persons.concat({ name: newName, number: newPhone, id: uuidv4() }));
       event.target.reset();
       setNewName("");
     }
@@ -65,7 +68,7 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
   );
 };
 
-const SearchWidget = ({ setSearchTerm }: { setSearchTerm: (searchTerm: string) => void }) => {
+const SearchWidget = ({ setSearchTerm }: { setSearchTerm: React.Dispatch<React.SetStateAction<string>> }) => {
   return (
     <div>
       <input onChange={handleInputChange(setSearchTerm)} />
@@ -74,15 +77,21 @@ const SearchWidget = ({ setSearchTerm }: { setSearchTerm: (searchTerm: string) =
 };
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', phoneNumber: '555-1212' }
-  ]);
+  const [persons, setPersons] = useState([] as Person[]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then(response => {
+        setPersons(response.data);
+      })
+  }, []);
 
   return (
     <div>
       <h1>Phonebook</h1>
-      filter: <SearchWidget searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      filter: <SearchWidget setSearchTerm={setSearchTerm} />
       <h2>Add New</h2>
       <AddNumberForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>
