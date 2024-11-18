@@ -13,7 +13,7 @@ const handleInputChange = (controller: React.Dispatch<React.SetStateAction<strin
 }
 
 const DisplayNumbers = ({ persons, searchTerm }: { persons: Person[], searchTerm: string }) => {
-  const filterFunc = (person: Person): boolean => 
+  const filterFunc = (person: Person): boolean =>
     searchTerm === '' || RegExp(searchTerm, "i").test(person.name);
 
   return (
@@ -46,9 +46,15 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
     if (persons.map(({ name }) => name.toLowerCase()).includes(newName.toLowerCase())) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat({ name: newName, number: newPhone, id: uuidv4() }));
-      event.target.reset();
-      setNewName("");
+      const newPerson: Omit<Person, "id"> = { name: newName, number: newPhone };
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then(response => {
+          setPersons(persons.concat(response.data));
+          event.target.reset();
+          setNewName("");
+          setNewPhone("");
+        })
     }
   };
 
