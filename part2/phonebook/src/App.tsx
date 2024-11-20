@@ -8,8 +8,8 @@ const handleInputChange = (controller: React.Dispatch<React.SetStateAction<strin
 
 const handleDelete = (id: string, persons: Person[], setPersons: (persons: Person[]) => void) => {
   return () => {
-    Persons.deletePerson(id).then(response => {
-      setPersons(persons.filter(person => person.id !== response.id))
+    Persons.deletePerson(id).then(() => {
+      setPersons(persons.filter(person => person.id !== id))
     });
   };
 }

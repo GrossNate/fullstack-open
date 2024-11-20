@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 const PORT = 3001;
 
-const phonebookEntries = [
+let phonebookEntries = [
   {
     id: "1",
     name: "Arto Hellas",
@@ -49,7 +49,12 @@ app.get("/api/persons/:id", (req, res) => {
   } else {
     res.status(404).end();
   }
-})
+});
+
+app.delete("/api/persons/:id", (req, res) => {
+  phonebookEntries = phonebookEntries.filter(({id}) => id !== req.params.id);
+  res.status(204).end();
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
