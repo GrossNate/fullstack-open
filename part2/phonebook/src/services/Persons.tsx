@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type {Person} from "./types/types"
 
-const baseUrl = 'http://localhost:3001/persons';
+const baseUrl = 'http://localhost:3001/api/persons';
 
 const Persons = {
   getAll: () => {
