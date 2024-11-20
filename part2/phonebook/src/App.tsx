@@ -61,10 +61,14 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
       Persons
         .create(newPerson)
         .then(person => {
-          setPersons(persons.concat(person));
-          event.target.reset();
-          setNewName("");
-          setNewPhone("");
+          if ("error" in person) {
+            alert(person.error);
+          } else {
+            setPersons(persons.concat(person));
+            event.target.reset();
+            setNewName("");
+            setNewPhone("");
+          }
         })
     }
   };
