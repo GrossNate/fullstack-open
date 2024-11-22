@@ -16,7 +16,7 @@ const handleDelete = (id: string, persons: Person[], setPersons: (persons: Perso
 
 const DeleteButtonWidget = ({ id, persons, setPersons }: { id: string, persons: Person[], setPersons: (persons: Person[]) => void }) => {
   return (
-    <button onClick={handleDelete(id, persons, setPersons)} />
+    <button onClick={handleDelete(id, persons, setPersons)}>🗑️</button>
   )
 }
 

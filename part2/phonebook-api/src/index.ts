@@ -1,9 +1,12 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
 const cors = require("cors");
+const morgan = require("morgan");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
+
+morgan.token('body', function (req: Request) { return JSON.stringify(req.body)});
 
 let phonebookEntries = [
   {
@@ -36,10 +39,12 @@ const nameExistsInPhonebook = (name: string) => {
 
 app.use(cors());
 app.use(express.json());
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
+app.use(express.static('dist/public/'));
 
-app.get("/", (_, res) => {
-  res.send("Hello, TypeScript with Express!");
-});
+// app.get("/", (_, res) => {
+//   res.send("Hello, TypeScript with Express!");
+// });
 
 app.get("/info", (_, res) => {
   res.send(`<p>Phonebook has info for ${phonebookEntries.length} people</p>
