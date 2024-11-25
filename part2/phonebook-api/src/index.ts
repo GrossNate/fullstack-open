@@ -1,10 +1,15 @@
+require('dotenv').config();
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
 const cors = require("cors");
 const morgan = require("morgan");
+const Person = require("./models/person");
+
+// Importing the type from the frontend. Ignoring the error for now.
+import type { Person as PersonType } from "../../phonebook/src/types/types"
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 morgan.token('body', function (req: Request) { return JSON.stringify(req.body)});
 
@@ -31,12 +36,6 @@ let phonebookEntries = [
   },
 ];
 
-const nameExistsInPhonebook = (name: string) => {
-  return phonebookEntries
-    .map(({ name }) => name.toLowerCase())
-    .includes(name.toLowerCase());
-};
-
 app.use(cors());
 app.use(express.json());
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
@@ -52,7 +51,7 @@ app.get("/info", (_, res) => {
 });
 
 app.get("/api/persons", (_, res) => {
-  res.json(phonebookEntries);
+  Person.find({}).then((people: PersonType[]) => res.json(people));
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -73,19 +72,31 @@ app.delete("/api/persons/:id", (req, res) => {
 
 app.post("/api/persons", (req, res) => {
   const person = req.body;
-  if (person.name && person.number && !nameExistsInPhonebook(person.name)) {
-    const newPerson = { ...person, id: uuidv4() };
-    phonebookEntries = phonebookEntries.concat(newPerson);
-    res.json(newPerson);
+  if (!person.name) {
+    res.json({error: "Name can't be blank"});
+  } else if (!person.number) {
+    res.json({error: "Number can't be blank"});
   } else {
-    let errorMessage = !person.name
-      ? "Name can't be blank"
-      : nameExistsInPhonebook(person.name)
-      ? "Name must be distinct."
-      : "Phone number can't be blank";
-    res.json({ error: errorMessage });
+    Person.find({name: person.name})
+      .then((people: PersonType[]) => {
+        return (people
+          .map((person: PersonType) => person.name)
+          .filter(name => name === person.name)
+          .length) === 0;
+      })
+      .then((nameUnique: boolean) => {
+        if (nameUnique) {
+          const newPerson = new Person(person);
+          newPerson.save().then((result: unknown) => {
+            res.json(result);
+          })
+
+        } else {
+          res.json({error: "Name must be unique"});
+        }
+      })
   }
 });
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

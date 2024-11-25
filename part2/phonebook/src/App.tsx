@@ -54,9 +54,6 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
 
   const handleSubmitForm = (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (persons.map(({ name }) => name.toLowerCase()).includes(newName.toLowerCase())) {
-      alert(`${newName} is already added to phonebook`);
-    } else {
       const newPerson: Omit<Person, "id"> = { name: newName, number: newPhone };
       Persons
         .create(newPerson)
@@ -70,7 +67,7 @@ const AddNumberForm = ({ persons, setPersons }: { persons: Person[], setPersons:
             setNewPhone("");
           }
         })
-    }
+    // }
   };
 
   return (
